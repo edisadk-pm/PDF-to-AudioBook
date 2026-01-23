@@ -4,7 +4,6 @@ from tkinterdnd2 import DND_FILES, TkinterDnD
 import pyttsx3
 from PyPDF2 import PdfReader
 import threading
-import queue
 import re
 import os
 
@@ -26,13 +25,9 @@ class AudioBookApp:
         self.speech_rate = 150
         self.engine = None
         self.speech_thread = None
-        self.command_queue = queue.Queue()
         
         # Setup UI
         self.setup_ui()
-        
-        # Start command processor
-        self.process_commands()
         
     def setup_ui(self):
         """Setup the user interface"""
@@ -299,7 +294,8 @@ class AudioBookApp:
         if self.engine:
             try:
                 self.engine.stop()
-            except:
+            except RuntimeError:
+                # Engine may already be stopped or in an invalid state
                 pass
                 
     def skip_forward(self):
@@ -378,17 +374,6 @@ class AudioBookApp:
     def show_error(self, message):
         """Show error message"""
         self.status_label.config(text=f"Error: {message}", foreground='red')
-        
-    def process_commands(self):
-        """Process commands from queue"""
-        try:
-            while True:
-                command = self.command_queue.get_nowait()
-                command()
-        except queue.Empty:
-            pass
-        finally:
-            self.root.after(100, self.process_commands)
 
 
 def main():
