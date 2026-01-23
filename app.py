@@ -289,14 +289,6 @@ class AudioBookApp:
         self.status_label.config(text="Stopped", foreground='gray')
         self.play_pause_btn.config(text="▶ Play")
         self.display_current_text()
-        
-        # Stop the engine
-        if self.engine:
-            try:
-                self.engine.stop()
-            except RuntimeError:
-                # Engine may already be stopped or in an invalid state
-                pass
                 
     def skip_forward(self):
         """Skip forward in text"""
